@@ -8,6 +8,69 @@ internal class Visitor : LaunchablePattern
 {
     protected override Task Main()
     {
-        throw new NotImplementedException();
+        ArmedSoldier armedSoldier = new ConcreateArmedSoldier();
+        SmartSoldier smartSoldier = new ConcreateSmartSoldier();
+
+        armedSoldier.Accept(new HackPentagonCommand());
+        smartSoldier.Accept(new HackPentagonCommand());
+        armedSoldier.Accept(new ShootTargetCommand(new { enemy = "Imran Zahaev" }));
+
+        return Task.CompletedTask;
+    }
+
+    interface ISoldier
+    {
+        void Accept(BaseSoldiersCommand visitor);
+    }
+
+    // Классы солдат. Предполагается, что эти классы - неизменяемое кол-во
+    abstract record StrongSoldier() : ISoldier
+    {
+        public void Accept(BaseSoldiersCommand visitor)
+            => visitor.Visit(this);
+    }
+
+    abstract record SmartSoldier() : ISoldier
+    {
+        public void Accept(BaseSoldiersCommand visitor)
+            => visitor.Visit(this);
+    }
+
+    abstract record ArmedSoldier() : ISoldier
+    {
+        public void Accept(BaseSoldiersCommand visitor)
+            => visitor.Visit(this);
+    }
+
+    record ConcreateArmedSoldier() : ArmedSoldier;
+    record ConcreateSmartSoldier() : SmartSoldier;
+
+
+    // Посетитель представляет собой некое действие, совершаемое над иеархией солдат
+    abstract class BaseSoldiersCommand
+    {
+        public virtual void Visit(StrongSoldier soldier) { }
+        public virtual void Visit(SmartSoldier soldier) { }
+        public virtual void Visit(ArmedSoldier soldier) { }
+    }
+
+    class ShootTargetCommand : BaseSoldiersCommand
+    {
+        private readonly object _target; // для примера
+
+        public ShootTargetCommand(object target)
+           => _target = target;
+
+        public override void Visit(ArmedSoldier soldier)
+            => Console.WriteLine("armed soldier shot a target");
+    }
+
+    class HackPentagonCommand : BaseSoldiersCommand
+    {
+        public override void Visit(SmartSoldier soldier)
+            => Console.WriteLine("smart soldier hacked a pentagon");
+
+        public override void Visit(ArmedSoldier soldier)
+            => Console.WriteLine("Warning! armed soldier cannot hack a pentagon");
     }
 }
