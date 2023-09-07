@@ -42,8 +42,8 @@ internal class Visitor : LaunchablePattern
             => visitor.Visit(this);
     }
 
-    record ConcreateArmedSoldier() : ArmedSoldier;
-    record ConcreateSmartSoldier() : SmartSoldier;
+    sealed record ConcreateArmedSoldier() : ArmedSoldier;
+    sealed record ConcreateSmartSoldier() : SmartSoldier;
 
 
     // Посетитель представляет собой некое действие, совершаемое над иеархией солдат
@@ -54,7 +54,7 @@ internal class Visitor : LaunchablePattern
         public virtual void Visit(ArmedSoldier soldier) { }
     }
 
-    class ShootTargetCommand : BaseSoldiersCommand
+    sealed class ShootTargetCommand : BaseSoldiersCommand
     {
         private readonly object _target; // для примера
 
@@ -65,7 +65,7 @@ internal class Visitor : LaunchablePattern
             => Console.WriteLine("armed soldier shot a target");
     }
 
-    class HackPentagonCommand : BaseSoldiersCommand
+    sealed class HackPentagonCommand : BaseSoldiersCommand
     {
         public override void Visit(SmartSoldier soldier)
             => Console.WriteLine("smart soldier hacked a pentagon");
