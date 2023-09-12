@@ -15,7 +15,8 @@ List<LaunchablePattern> patterns = new()
     //new Iterator(),
     //new Visitor(),
     //new Command(),
-    new StatePattern()
+    //new StatePattern(),
+    new Memento(),
 };
 
 foreach (var pattern in patterns)

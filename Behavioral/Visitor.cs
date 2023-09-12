@@ -12,6 +12,7 @@ internal class Visitor : LaunchablePattern
         SmartSoldier smartSoldier = new ConcreateSmartSoldier();
 
         armedSoldier.Accept(new HackPentagonCommand());
+        armedSoldier.Accept(new GreetCommand());
         smartSoldier.Accept(new HackPentagonCommand());
         armedSoldier.Accept(new ShootTargetCommand(new { enemy = "Imran Zahaev" }));
 
@@ -49,9 +50,13 @@ internal class Visitor : LaunchablePattern
     // Посетитель представляет собой некое действие, совершаемое над иеархией солдат
     abstract class BaseSoldiersCommand
     {
-        public virtual void Visit(StrongSoldier soldier) { }
-        public virtual void Visit(SmartSoldier soldier) { }
-        public virtual void Visit(ArmedSoldier soldier) { }
+        public virtual void Visit(ISoldier soldier) { }
+        public virtual void Visit(StrongSoldier soldier)
+            => Visit((ISoldier)soldier);
+        public virtual void Visit(SmartSoldier soldier)
+            => Visit((ISoldier)soldier);
+        public virtual void Visit(ArmedSoldier soldier)
+            => Visit((ISoldier)soldier);
     }
 
     sealed class ShootTargetCommand : BaseSoldiersCommand
@@ -72,5 +77,11 @@ internal class Visitor : LaunchablePattern
 
         public override void Visit(ArmedSoldier soldier)
             => Console.WriteLine("Warning! armed soldier cannot hack a pentagon");
+    }
+
+    sealed class GreetCommand : BaseSoldiersCommand
+    {
+        public override void Visit(ISoldier soldier)
+           => Console.WriteLine("Greetings!");
     }
 }
