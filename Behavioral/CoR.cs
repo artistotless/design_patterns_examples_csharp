@@ -1,6 +1,4 @@
-﻿using System.Reflection.Metadata;
-
-namespace DesignOfPatterns.Behavioral;
+﻿namespace DesignOfPatterns.Behavioral;
 
 /* Паттерн Chain of Responsibility - позволяет избежать привязки 
  * объекта-отправителя запроса к объекту-получателю запроса, 
@@ -14,11 +12,17 @@ internal class CoR : LaunchablePattern
 {
     protected override Task Main()
     {
-        var pipeline = new Authorization(new EndpointResolver(null));
+        var middleware1 = new Authorization();
+        var middleware2 = new NameFiltration();
+        var middleware3 = new EndpointResolver();
 
-        pipeline.Handle(new("Conor", Role.user), new("login-page"));
-        pipeline.Handle(new("Conor", Role.admin), new("admin-page"));
-        pipeline.Handle(new("Conor", Role.admin), new("admin-panel"));
+        middleware1.SetNext(middleware2).SetNext(middleware3);
+
+        middleware1.Handle(new("Conor", Role.user), new("login-page"));
+        middleware1.Handle(new("Conor", Role.admin), new("admin-page"));
+        middleware1.Handle(new("Donald", Role.admin), new("admin-page"));
+        middleware1.Handle(new("Gary", Role.admin), new("admin-page"));
+        middleware1.Handle(new("Conor", Role.admin), new("admin-panel"));
 
         return Task.CompletedTask;
     }
@@ -30,6 +34,13 @@ internal class CoR : LaunchablePattern
     abstract class Middleware
     {
         protected Middleware Next { get; set; }
+
+        public Middleware SetNext(Middleware middleware)
+        {
+            Next = middleware;
+
+            return Next;
+        }
 
         protected virtual void BeforeHandle()
             => Console.WriteLine($"{GetType().Name} start");
@@ -53,13 +64,29 @@ internal class CoR : LaunchablePattern
         }
     }
 
-    class Authorization : Middleware
+    class NameFiltration : Middleware
     {
-        public Authorization(Middleware next)
+        private readonly List<string> _blackListNames;
+
+        public NameFiltration()
         {
-            Next = next;
+            _blackListNames = new()
+            {
+                "Donald", "John", "Joseph", "Gary"
+            };
         }
 
+        protected override void Run(User user, Request request)
+        {
+            if (_blackListNames.Contains(user.name))
+                Console.WriteLine($"The '{user.name}' name is in blacklist");
+            else
+                PassToNext(user, request);
+        }
+    }
+
+    class Authorization : Middleware
+    {
         protected override void Run(User user, Request request)
         {
             if (user.role == Role.admin)
@@ -71,11 +98,6 @@ internal class CoR : LaunchablePattern
 
     class EndpointResolver : Middleware
     {
-        public EndpointResolver(Middleware next)
-        {
-            Next = next;
-        }
-
         protected override void Run(User user, Request request)
         {
             if (request.resource is null ||
