@@ -1,25 +1,26 @@
 ﻿using DesignOfPatterns;
-using DesignOfPatterns.Creational;
 using DesignOfPatterns.Behavioral;
-using System.Collections;
-using System.Runtime.CompilerServices;
+using DesignOfPatterns.Creational;
+using DesignOfPatterns.Structural;
 
 List<LaunchablePattern> patterns = new()
 {
-    //new AbstractFactory(),
-    //new Builder(),
-    //new FabricMethod(),
+    new AbstractFactory(),
+    new Builder(),
+    new FabricMethod(),
 
-    //new Strategy(),
-    //new TemplateMethod(),
-    //new Mediator(),
-    //new Observer(),
-    //new Iterator(),
-    //new Visitor(),
-    //new Command(),
-    //new StatePattern(),
-    //new Memento(),
-    new CoR()
+    new Strategy(),
+    new TemplateMethod(),
+    new Mediator(),
+    new Observer(),
+    new Iterator(),
+    new Visitor(),
+    new Command(),
+    new StatePattern(),
+    new Memento(),
+    new CoR(),
+
+    new Adapter(),
 };
 
 foreach (var pattern in patterns)
