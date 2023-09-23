@@ -1,35 +1,41 @@
-﻿using System.Drawing;
+﻿using System.Collections;
+using System.Drawing;
 
 namespace DesignOfPatterns.Behavioral;
 
-/* Снимок — это поведенческий паттерн проектирования, 
+/* Memento — это поведенческий паттерн проектирования, 
  * который позволяет сохранять и восстанавливать прошлые состояния объектов,
- * не раскрывая подробностей их реализации.*/
+ * не раскрывая подробностей их реализации.
+ 
+ * Паттерн Memento - не нарушая инкапсуляции, фиксирует
+ * и выносит за пределы объекта-хозяина его внутреннее состояние так,
+ * чтобы позднее это вынесенное состояние можно было восстановить в исходном объекте-хозяине.
+ */
 
 internal class Memento : LaunchablePattern
 {
-    protected override Task Main()
+    protected override async Task Main()
     {
         var settings = MouseSettings.Instance;
 
         var defaultPreset = settings.SavePreset("default");
-        Console.WriteLine("Saved 'default' preset ...");
+        Console.WriteLine($"[{defaultPreset.Created}] Saved 'default' preset ...");
 
         settings.SetRgb(false);
         settings.SetSensetivity(1.78f);
         settings.SetDpi(400);
         Console.WriteLine("Modified MouseSettings state ...");
 
+        await Task.Delay(2000);
+
         var customPreset = settings.SavePreset("my_preset");
-        Console.WriteLine("Saved 'my_preset' preset...");
+        Console.WriteLine($"[{customPreset.Created}] Saved 'my_preset' preset...");
 
         defaultPreset.Restore();
         Console.WriteLine("Restored 'default' preset ...");
 
         customPreset.Restore();
         Console.WriteLine("Restored 'my_preset' preset ...");
-
-        return Task.CompletedTask;
     }
 
     interface ISnapshot

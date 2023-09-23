@@ -1,6 +1,8 @@
 ﻿using DesignOfPatterns;
 using DesignOfPatterns.Creational;
 using DesignOfPatterns.Behavioral;
+using System.Collections;
+using System.Runtime.CompilerServices;
 
 List<LaunchablePattern> patterns = new()
 {
@@ -16,7 +18,8 @@ List<LaunchablePattern> patterns = new()
     //new Visitor(),
     //new Command(),
     //new StatePattern(),
-    new Memento(),
+    //new Memento(),
+    new CoR()
 };
 
 foreach (var pattern in patterns)
